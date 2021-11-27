@@ -1,0 +1,89 @@
+---
+title: "Laboratori sessió 1"
+author: "Marc Comas"
+date: "11/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# $K$-means
+
+Importem el les dades de l'arxiu `sim01.csv`.
+
+```{r}
+library(data.table)
+x = fread('sim01.csv')
+```
+
+```{python}
+import datatable as dt
+x = dt.fread('sim01.csv')
+```
+
+S'han desplaçat la meïtat del punts per obtenir dos clusters.
+
+```{r}
+plot(x, main = "Non-clustered examples",
+     xlab = "", ylab = "", pch = 20)
+```
+
+Anem a ajustar un $K$-means amb mlr3.
+
+```{r}
+library(mlr3cluster)
+set.seed(1)
+km2 = mlr_learners$get("clust.kmeans")
+km2$param_set$values = list(centers = 2, nstart = 1, iter.max = 10)
+km2$train(as_task_clust(x))
+km2$assignments
+km2$model$cluster
+```
+
+```{python}
+from sklearn.cluster import KMeans
+km = KMeans(n_clusters=2, n_init = 1, max_iter = 10, init = 'random', random_state=2)
+km.fit(x)
+km.labels_
+```
+
+Utilitzem l'etiqueta per visualitzar els exemples amb l'agrupació assignada.
+
+```{r}
+plot(x, col = km2$assignments,
+     main = "K-Means Clustering Results with K = 2",
+     xlab = "", ylab = "", pch = 20, cex = 2)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+plt.scatter(x['V1'], x['V2'], c = km.labels_)
+plt.title("K-Means Clustering Results with K = 2")
+plt.show()
+```
+
+```{r}
+newdata = data.table(1, -2)
+km2$predict(as_task_clust(newdata))
+km2$predict_newdata(newdata)
+km2$model$centers
+```
+
+```{python}
+newdata = dt.Frame(V1 = [1], V2 = [-2])
+label = km.predict(newdata)
+km.cluster_centers_
+```
+
+```{r}
+set.seed(4)
+km = kmeans(x, centers = 3, nstart = 100000, iter.max = 10)
+# Plot the clusters
+plot(x, col = km$cluster,
+     main = "K-Means Clustering Results with K = 3",
+     xlab = "", ylab = "", pch = 20, cex = 2)
+```
+
+# SOM
