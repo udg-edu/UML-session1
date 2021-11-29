@@ -87,3 +87,34 @@ plot(x, col = km$cluster,
 ```
 
 # SOM
+
+
+Llibreria Python SOM: <https://github.com/JustGlowing/minisom>
+
+```{r}
+library(data.table)
+x = fread('sim02.csv')
+```
+
+Volem capturar el patró unidimensional de les dades, utilitzarem un graella 1 x 10.
+
+```{r}
+set.seed(3)
+GRID = somgrid(10, 1)
+som_out = som(as.matrix(x), grid = GRID, alpha = c(0.05, 0.01), radius = 3)
+
+plot(x)
+points(som_out$codes[[1]], cex = 2, col = 'blue', pch = 16)
+lines(som_out$codes[[1]], cex = 2, col = 'blue', pch = 16)
+```
+
+```{r}
+km_out = kmeans(x, centers = 10, nstart = 100, iter.max = 100)
+
+points(km_out$centers, cex = 2, col = 'orange', pch = 16)
+```
+
+```{r}
+som_out$unit.classif
+```
+
