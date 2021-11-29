@@ -22,7 +22,7 @@ class Kmeans:
   def assignment_step(self):
     # Write your assignment_step here.
     #### -- next line creates random clusters, and should be removed --
-    self.cluster = np.random.randint(0, K, self.X.shape[0])
+    self.cluster = np.random.randint(0, self.K, self.X.shape[0])
     
     return self
     
